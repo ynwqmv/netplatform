@@ -132,16 +132,18 @@
   <ItemGroup>
     <ClCompile Include="..\..\YnwProjects\YnwProjects\sha512.cpp" />
     <ClCompile Include="Block.cpp" />
+    <ClCompile Include="Blockchain.cpp" />
     <ClCompile Include="Client.cpp" />
-    <ClCompile Include="netplatform.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="Transaction.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\YnwProjects\YnwProjects\sha512.h" />
     <ClInclude Include="Block.h" />
+    <ClInclude Include="Blockchain.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Server.h" />
+    <ClInclude Include="sha512.h" />
     <ClInclude Include="Transaction.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
