@@ -50,7 +50,9 @@ public:
 		std::string hash = sha512(hashtmp);
 		return hash;
 	}
-
+bool getValidate(void) {
+		  return true;
+	}
 private:
 	uint64_t index{ 0 };
 	time_t timestamp{ NULL };
