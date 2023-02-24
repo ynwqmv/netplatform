@@ -8,7 +8,6 @@
 #include <vector>
 #include <iostream> 
 
-
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 
@@ -16,10 +15,8 @@
 
 //////////////////////////////
 using json = nlohmann::json;//
-//
 using std::cout;            //
 using std::cin;             //
-//
 using std::endl;            //
 //////////////////////////////
 
