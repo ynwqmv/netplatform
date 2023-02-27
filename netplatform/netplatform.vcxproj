@@ -104,13 +104,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>C:\boost\boost_1_81_0\boost;C:\spdlog\spdlog-1.x\include;C:\Users\qumar\OneDrive\Desktop\json-develop\json-develop\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>Default</LanguageStandard>
+      <AdditionalIncludeDirectories>C:\spdlog\spdlog-1.x\include;C:\Users\qumar\OneDrive\Desktop\json-develop\json-develop\include;C:\Users\qumar\OneDrive\Desktop\vcpkg\packages\openssl_x86-windows\include;C:\Users\qumar\OneDrive\Desktop\vcpkg\packages\cryptopp_x86-windows\include;C:\boost_1_81_0(2)\boost_1_81_0;C:\Simple-Web-Server-master\Simple-Web-Server-master;C:\pistache-master\pistache-master\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\boost\boost_1_81_0\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\boost_1_81_0(2)\boost_1_81_0\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -131,18 +131,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\YnwProjects\YnwProjects\sha512.cpp" />
-    <ClCompile Include="Block.cpp" />
-    <ClCompile Include="Blockchain.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Server.cpp" />
-    <ClCompile Include="Transaction.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Block.h" />
     <ClInclude Include="Blockchain.h" />
-    <ClInclude Include="Client.h" />
-    <ClInclude Include="Server.h" />
+    <ClInclude Include="Network.h" />
+    <ClInclude Include="Merkle.hpp" />
     <ClInclude Include="sha512.h" />
     <ClInclude Include="Transaction.h" />
   </ItemGroup>
