@@ -92,7 +92,9 @@ public:
 	{
  
 	}
-
+bool getValidate(void) {
+		  return true;
+	}
 private:
 	friend class Blockchain;
 	friend class http_connection;
