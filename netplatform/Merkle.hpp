@@ -8,19 +8,22 @@ public:
 	Merkle(const std::vector<Transaction>& transactions)
 	{
 		if (transactions.empty())
-		{
-			throw std::runtime_error("No transactions");
-		}
-		
-		 
+			spdlog::info("Merkle is empty");
 
+		
+		/* (InDev #0.1) */
 	}
 
 	
 
 	
 private:
-	std::vector<Transaction> hashes_;
+
+	 
+
+	 
+
+	std::string hashes_;
 
 	/*std::string HashTransaction(const Transaction& tx) const
 	{

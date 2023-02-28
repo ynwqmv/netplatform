@@ -105,7 +105,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>Default</LanguageStandard>
-      <AdditionalIncludeDirectories>C:\spdlog\spdlog-1.x\include;C:\Users\qumar\OneDrive\Desktop\json-develop\json-develop\include;C:\Users\qumar\OneDrive\Desktop\vcpkg\packages\openssl_x86-windows\include;C:\Users\qumar\OneDrive\Desktop\vcpkg\packages\cryptopp_x86-windows\include;C:\boost_1_81_0(2)\boost_1_81_0;C:\Simple-Web-Server-master\Simple-Web-Server-master;C:\pistache-master\pistache-master\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\spdlog\spdlog-1.x\include;C:\Users\qumar\OneDrive\Desktop\json-develop\json-develop\include;C:\Users\qumar\OneDrive\Desktop\vcpkg\packages\openssl_x86-windows\include;C:\Users\qumar\OneDrive\Desktop\vcpkg\packages\cryptopp_x86-windows\include;C:\boost_1_81_0(2)\boost_1_81_0;C:\Simple-Web-Server-master\Simple-Web-Server-master;C:\pistache-master\pistache-master\include;C:\merklecpp-main\merklecpp-main;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

@@ -30,6 +30,7 @@ public:
 	}
 	std::string Mine(Block& block)
 	{
+		
 		spdlog::info("Mininig ... [ difficulty: {} ]", difficulty);
 		std::string target(difficulty, '0');  // create target value
 		std::string hash;
@@ -93,14 +94,18 @@ public:
 
 		if (!pendingTransaction.empty())
 		{
-			std::vector<Transaction> transactions = block.transaction;
-			transactions.insert(transactions.end(), pendingTransaction.begin(), pendingTransaction.end());
-			block.transaction = transactions;
-			pendingTransaction.clear();
-		}
-		else
-		{
-
+			std::vector<Transaction> transactions;
+			if (pendingTransaction.size() <= MAX_BLOCK_SIZE)
+			{
+				transactions = pendingTransaction;
+				pendingTransaction.clear();
+			}
+			else
+			{
+				transactions = std::vector<Transaction>(pendingTransaction.begin(), pendingTransaction.begin() + MAX_BLOCK_SIZE);
+				pendingTransaction = std::vector<Transaction>(pendingTransaction.begin() + MAX_BLOCK_SIZE, pendingTransaction.end());
+			}
+			block.transaction.insert(block.transaction.end(), transactions.begin(), transactions.end());
 		}
 
 		blocks_.push_back(block);
@@ -109,6 +114,29 @@ public:
 	}
 
 
+	const void pending_transactions() const noexcept 
+	{
+		spdlog::set_level(spdlog::level::debug);
+		if (!pendingTransaction.empty())
+		{
+			 
+			
+			for (const auto& i : pendingTransaction)
+			{
+				spdlog::info("*+=+=+=+=+=+=+=+=+=+=+");
+				spdlog::info("Amount: {}", i.getAmount());
+				spdlog::info("inTx: {}", i.getFrom());
+				spdlog::info("outTx: {}", i.getRecipient());
+				 
+			}
+			std::cout << std::endl;
+		}
+		else
+		{
+			spdlog::debug("No transactions yet");
+		}
+		
+	}
 	Block getLastBlock() const noexcept
 	{
 		if (blocks_.empty())
@@ -139,9 +167,10 @@ public:
 			spdlog::info("Transactions:");
 			for (auto transaction : block.transaction) {
 				
-				spdlog::info("Sender: {}", transaction.getFrom());
-				spdlog::info("Recipient: {}", transaction.getRecipient());
-				spdlog::info("Amount: {}", transaction.getAmount());
+				spdlog::info("\tSender: {}", transaction.getFrom());
+				spdlog::info("\tRecipient: {}", transaction.getRecipient());
+				spdlog::info("\tAmount: {}", transaction.getAmount());
+				spdlog::info("TX Hash: {}", transaction.getTransactionHash());
 			}
 			std::cout << "*+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+*\n";
 		}
@@ -156,13 +185,17 @@ public:
 		j["hash"] = b.hash;
 		j["prevHash"] = b.prevHash;
 		j["nonce"] = b.nonce;
+		
 		for (const auto& i : b.getTransaction())
 		{
 			j["transactions"] = json::object();
 			j["amount"] = i.getAmount();
 			j["from"] = i.getFrom();
 			j["recipient"] = i.getRecipient();
-		}
+			 
+ 		}
+		
+				
 		return j;
 	}
 	// prints all blocks in blockchain
@@ -195,22 +228,20 @@ public:
 
 		return j;
 	}
-
-
 private:
 	std::vector<Block> blocks_;
 	std::vector<Transaction> pendingTransaction;
 	void create_genesis_block()
 	{
 		Block block;
-		block.index =     0;
+		block.index =     NULL;
 		block.timestamp = NULL;
-		block.hash =	 "00000000000000000000000000000000000000";
-		block.prevHash = "00000000000000000000000000000000000000";
-		block.nonce =	 "0";
+		block.hash =	 "NULL";
+		block.prevHash = "NULL";
+		block.nonce =	 "NULL";
 
 		blocks_.push_back(block);
 	}
-	friend class http_connection;
+	 
 };
  
