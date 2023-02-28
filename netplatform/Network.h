@@ -63,6 +63,7 @@ namespace my_program_state
     
 }
 
+
 class http_connection : public std::enable_shared_from_this<http_connection>
 {
 public:
