@@ -11,7 +11,10 @@ class Blockchain
 
 public:
 	Blockchain()      /*   Genesis Block  */
-		: blocks_{} { create_genesis_block(); }
+		: blocks_{} {
+		create_genesis_block();
+		spdlog::info("> Genesis block forged!");
+	}
 	 
 	const void addTransaction(const Transaction& tx) 
 	{
@@ -30,7 +33,7 @@ public:
 	}
 	std::string Mine(Block& block)
 	{
-		
+		 
 		spdlog::info("Mininig ... [ difficulty: {} ]", difficulty);
 		std::string target(difficulty, '0');  // create target value
 		std::string hash;
@@ -79,16 +82,21 @@ public:
 		spdlog::info("Difficulty: {}", difficulty);
 		spdlog::info("Block Reward: {}", reward);
 		spdlog::info("Max Block Size: {}", MAX_BLOCK_SIZE);
+		spdlog::info("Blocks found: {}", block_count);
 		spdlog::info("Encryption: SHA512");
 	}
 	void addBlock(Block& block)
 	{
+
+		
 		if (blocks_.empty())
 		{
 			block.setPrevHash("");
 		}
 		else
 		{
+			block.index++;
+			block.timestamp = std::time(nullptr);
 			block.setPrevHash(blocks_.back().getHash());
 		}
 
@@ -109,8 +117,19 @@ public:
 		}
 
 		blocks_.push_back(block);
+		block.block_count++;
 		spdlog::info("Block was added successfully!");
 		print_chain();
+		
+		if (block.block_count % EBLOCKS == 0)
+		{
+			/*                * HALVING *
+				* Each `10000` blocks difficulty(+2) | reward(/2)
+			*/	
+			spdlog::info("Halving at block # {}", block.block_count);
+			difficulty += 2;
+			reward /= 2;
+		}
 	}
 
 
@@ -198,6 +217,10 @@ public:
 				
 		return j;
 	}
+	const Blockchain getChain() const
+	{
+		return *this;
+	}
 	// prints all blocks in blockchain
 	const json toJSON(const Blockchain& blockchain) const noexcept
 	{
@@ -235,7 +258,7 @@ private:
 	{
 		Block block;
 		block.index =     NULL;
-		block.timestamp = NULL;
+		block.timestamp = std::time(nullptr);
 		block.hash =	 "NULL";
 		block.prevHash = "NULL";
 		block.nonce =	 "NULL";
