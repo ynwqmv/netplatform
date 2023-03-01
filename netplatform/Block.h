@@ -14,18 +14,20 @@
 #include "sha512.h"
 #include <memory>
 
-
+#include <unordered_map>
+#include <unordered_set>
 #include <chrono>
 #include <cstdlib>
 #include <ctime>
 #include <memory>
+#include <queue>
 
 
 #include <string>
 #include <random>
 
-#define MAX_BLOCK_SIZE 1
-
+#define MAX_BLOCK_SIZE 1000
+#define EBLOCKS		   10000
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 using json = nlohmann::json; /**/
 using std::cout;             /**/
@@ -33,8 +35,8 @@ using std::cin;              /**/
 using std::endl;             /**/
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 
-constexpr int difficulty{ 0 }; // block-mining difficulty
-constexpr double reward{ 20.00070 };	
+int difficulty{ 2 }; // block-mining difficulty % 10000 : / 2
+double reward{ 20.00070 };	// reward % 10000 : / 2
 
 class Block
 {
@@ -54,7 +56,10 @@ public:
 	inline const std::vector<Transaction> getTransaction() const noexcept { return transaction; }
 	
 	
-	
+	Block getBlock() const noexcept
+	{
+		return *this;
+	}
 
 	// beta : calculating hash / @ynwqmv
 	inline const std::string calculateHash() noexcept
@@ -89,7 +94,26 @@ public:
 	{
  
 	}
-	
+
+
+	const json serialize() const noexcept
+	{
+		json j;
+		j["index"] = this->index;
+		j["hash"] = this->hash;
+		j["prevhash"] = this->prevHash;
+		j["timestamp"] = this->timestamp;
+		j["transactions"] = json::object();
+		for (const auto& tx : transaction)
+		{
+			j["from"] = tx.getFrom();
+			j["recipient"] = tx.getRecipient();
+			j["amount"] = tx.getAmount();
+		}
+		return j;
+	}
+
+	static size_t block_count;
 private:
 	friend class Blockchain;
 	friend class Network;
@@ -101,6 +125,11 @@ private:
 	std::string prevHash;
 	std::string nonce;
 	std::vector<Transaction> transaction;
+
+	
 	
  
 };
+
+size_t Block::block_count = 0;
+size_t block_count = Block::block_count;
