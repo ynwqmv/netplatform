@@ -20,9 +20,11 @@
 #include <cstdlib>
 #include <ctime>
 #include <memory>
+
 #include <queue>
+#include <boost/algorithm/string.hpp>
 
-
+#include <stdexcept>
 #include <string>
 #include <random>
 
@@ -65,7 +67,7 @@ public:
 	inline const std::string calculateHash() noexcept
 	{
 		std::string strData;
-
+	
 		
 		for (const auto& tx : transaction)
 		{
@@ -85,9 +87,7 @@ public:
 		this->hash = result;
 		return result;
 	}
-
-
-
+	 
 	void setPrevHash(std::string ph) { this->prevHash = ph; }
 	
 	const bool isValid() const noexcept
