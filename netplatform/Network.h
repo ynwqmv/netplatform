@@ -1,7 +1,7 @@
 /*
 	MIT License
 
-	Copyright (c) lexndrr (ALL)
+	Copyright (c) ynwcorp (ALL)
 
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -44,27 +44,51 @@ using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
 
 using boost::asio::ip::tcp;
 
+#include "Node.hpp"
+
 class Network
 {
 public:
 	explicit Network(Blockchain& chain, Block& block) : _chain(chain), _block(block), _ioContext(), _acceptor(_ioContext, tcp::endpoint(tcp::v4(), 8000)) {
 		listenForConnections();
 	}
-
+	
 	void run() {
 		spdlog::info("Starting network...");
+		menu();
 		_ioContext.run();
 	}
 
+	const bool isValid() const
+ 	{
+		if (_block.getHash() != _block.calculateHash())
+		{
+			return false;
+		}
+		
+		if (_block.transaction.size() > MAX_BLOCK_SIZE)
+		{
+			return false;
+		}
+		for (const auto& tx : _block.transaction)
+		{
+			if (tx.getAmount() < 0.000001 || tx.getFrom() == "" || tx.getRecipient() == "")
+			{
+				return false;
+			}
+		}
 
+		return true;
+	}
 private:
 	Blockchain& _chain;
 	Block& _block;
 	net::io_context _ioContext;
 	tcp::acceptor _acceptor;
-	std::vector < std::shared_ptr<tcp::socket> > _sockets;
 	
-std::unordered_set<std::string> _knownPeers;
+	std::vector < std::shared_ptr<tcp::socket> > _sockets;
+	friend class Node;
+	std::unordered_set<std::string> _knownPeers;
 
 	void listenForConnections() {
 
@@ -108,42 +132,30 @@ std::unordered_set<std::string> _knownPeers;
 	}
 
 	void handleMessage(const std::string& message) {
-		if (message.substr(0, 6) == "/hello") {
+		if (message.substr(0, 5) == "/peer")
 			handleHelloMessage(message);
-		}
-		else if (message.substr(0, 5) == "/sync") {
+
+		else if (message.substr(0, 5) == "/mine")
 			handleSyncMessage(message);
-		}
+
 		else if (message.substr(0, 9) == "/gen_addr")
-		{
 			handleAddrGenMessage(message);
-		}
 		else if (message.substr(0, 3) == "/tx")
-		{
-
 			handleTransactions();
-
-		}
 		else if (message.substr(0, 10) == "/pendingtx")
-		{
 			handlePendingTx();
-		}
+
 		else if (message.substr(0, 7) == "/tojson")
-		{
 			handleToJson();
-		}
-		else if (message.substr(0, 6) == "/peers")
+		else if (message.substr(0, 8) == "/isvalid")
 		{
-			for (const auto& peers : _knownPeers)
-			{
-				spdlog::info("Peers: {}", peers);
-			}
+			if (isValid()) { spdlog::info("Blockchain is valid"); }
+			else { spdlog::info("Blockchain is invalid"); }
 		}
-		else {
-			spdlog::warn("Unknown message type received: {}", message);
-		}
+		 
+		else spdlog::warn("Unknown message type received: {}", message);
 	}
-	void handleHelloMessage(const std::string& message) {
+	/*void handleHelloMessage(const std::string& message) {
 		std::string peerAddress = message.substr(6, message.length() - 7);
 
 		if (_knownPeers.count(peerAddress) == 0) {
@@ -151,9 +163,60 @@ std::unordered_set<std::string> _knownPeers;
 
 			_knownPeers.insert(peerAddress);
 		}
+	}*/
+
+	void handleHelloMessage(const std::string& message) {
+		std::string peerAddress = message.substr(6, message.length() - 7);
+		std::vector<std::string> parts;
+		boost::split(parts, peerAddress, boost::is_any_of(":"));
+
+		if (parts.size() == 2) {
+			std::string ip = parts[0];
+			std::string port = parts[1];
+
+			if (_knownPeers.count(peerAddress) == 0) {
+				spdlog::info("New peer connected: {} : {}",ip,port);
+
+				_knownPeers.insert(peerAddress);
+
+				try {
+					auto socket = std::make_shared<tcp::socket>(_ioContext);
+					boost::asio::io_service io_service;
+					tcp::resolver resolver(io_service);
+					auto endpoints = resolver.resolve(ip, port);
+
+					boost::asio::async_connect(*socket, endpoints,
+						[this, socket](const boost::system::error_code& error, tcp::endpoint endpoint) {
+							if (!error) {
+								spdlog::info("Connected to peer at {} : {}",endpoint.address().to_string(), endpoint.port());
+
+								_sockets.push_back(socket);
+
+								listenForMessages(socket);
+							}
+							else {
+								spdlog::info("Error connecting to peer at {} : {}",endpoint.address().to_string(), endpoint.port());
+							}
+						});
+				}
+				catch (const std::exception& e) {
+					spdlog::info("Connection Status: {}",e.what());
+				}
+			}
+		}
 	}
 
-
+	const void menu() const noexcept
+	{
+		spdlog::info("");
+		spdlog::info("+-+-+-+-+-+-+-+-+-+COMMANDS+-+-+-+-+-+-+-+-+-+");
+		spdlog::info("/peer		 | Usage :: /peer host:port	  | (ADD NEW PEER NODE)");
+		spdlog::info("/mine		 | Usage :: /mine		  | (START MINE)");
+		spdlog::info("/tx		 | Usage :: /tx from_address recipient_address amount | (MAKE TX)");
+		spdlog::info("/pendingtx      | Usage :: /pendingtx		  | (SHOW PENDING TX-S)");
+		spdlog::info("/tojson	 | Usage :: /tojson               | (PRINT BLOCKCHAIN IN JSON FORMAT)");
+		spdlog::info("+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+"); 
+	}
 
 	void handleSyncMessage(const std::string& message) {
 		 
@@ -177,6 +240,7 @@ std::unordered_set<std::string> _knownPeers;
 	void handleTransactions()
 	{
 		Transaction transaction = generateNewTransaction();
+		 
 		_chain.addTransaction(transaction);
 		 
 	}
@@ -201,40 +265,10 @@ std::unordered_set<std::string> _knownPeers;
 
 		return transaction;
 	}
- 
+	
+
+
 };
 
  
 #endif 
-
-
-
-
-
-/*
-
-	std::string peerAddress = message.substr(5, message.length() - 6);
-		if (_knownPeers.count(peerAddress) == 0) {
-			spdlog::warn("Sync message from unknown peer: {}", peerAddress);
-
-			return;
-		}
-		spdlog::info("Syncing with peer: {}", peerAddress);
-		std::queue<Block> blocksToSync;
-
-		for (const auto& block : _chain.getChain()) {
-			blocksToSync.push(block);
-		}
-
-		std::string syncRequest = "SYNC:" + _chain.getLastBlock().serialize() + '\n';
-		boost::asio::write(*socket, boost::asio::buffer(syncRequest));
-
-		while (!blocksToSync.empty()) {
-			auto block = blocksToSync.front();
-			blocksToSync.pop();
-
-			std::string blockMessage = "BLOCK:" + block.serialize() + '\n';
-			boost::asio::write(*socket, boost::asio::buffer(blockMessage));
-		}
-
-*/
