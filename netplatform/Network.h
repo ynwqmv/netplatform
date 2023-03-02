@@ -1,7 +1,7 @@
 /*
 	MIT License
 
-	Copyright (c) lexndrr (ALL)
+	Copyright (c) lexndrr *
 
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -206,35 +206,3 @@ std::unordered_set<std::string> _knownPeers;
 
  
 #endif 
-
-
-
-
-
-/*
-
-	std::string peerAddress = message.substr(5, message.length() - 6);
-		if (_knownPeers.count(peerAddress) == 0) {
-			spdlog::warn("Sync message from unknown peer: {}", peerAddress);
-
-			return;
-		}
-		spdlog::info("Syncing with peer: {}", peerAddress);
-		std::queue<Block> blocksToSync;
-
-		for (const auto& block : _chain.getChain()) {
-			blocksToSync.push(block);
-		}
-
-		std::string syncRequest = "SYNC:" + _chain.getLastBlock().serialize() + '\n';
-		boost::asio::write(*socket, boost::asio::buffer(syncRequest));
-
-		while (!blocksToSync.empty()) {
-			auto block = blocksToSync.front();
-			blocksToSync.pop();
-
-			std::string blockMessage = "BLOCK:" + block.serialize() + '\n';
-			boost::asio::write(*socket, boost::asio::buffer(blockMessage));
-		}
-
-*/
