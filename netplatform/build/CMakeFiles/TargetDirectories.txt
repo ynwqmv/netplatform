@@ -1,0 +1,3 @@
+C:/Users/qumar/source/repos/netplatform/netplatform/build/CMakeFiles/netplatform.dir
+C:/Users/qumar/source/repos/netplatform/netplatform/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/qumar/source/repos/netplatform/netplatform/build/CMakeFiles/ZERO_CHECK.dir

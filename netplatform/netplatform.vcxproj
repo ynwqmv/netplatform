@@ -131,7 +131,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\YnwProjects\YnwProjects\sha512.cpp" />
-    <ClCompile Include="Client.cpp" />
+    <ClCompile Include="CMakeLists.txt" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -139,6 +139,7 @@
     <ClInclude Include="Blockchain.h" />
     <ClInclude Include="Network.h" />
     <ClInclude Include="Merkle.hpp" />
+    <ClInclude Include="Node.hpp" />
     <ClInclude Include="sha512.h" />
     <ClInclude Include="Transaction.h" />
   </ItemGroup>

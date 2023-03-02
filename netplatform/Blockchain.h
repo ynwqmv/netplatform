@@ -34,7 +34,7 @@ public:
 	std::string Mine(Block& block)
 	{
 		 
-		spdlog::info("Mininig ... [ difficulty: {} ]", difficulty);
+		//spdlog::info("Mininig ...  \t\tdifficulty: {} ", difficulty);
 		std::string target(difficulty, '0');  // create target value
 		std::string hash;
 		std::string nonceStr;
@@ -59,11 +59,11 @@ public:
 		return hash;
 	}
 
-
+	 
 	// beta : 128 bit address generation (??? collisions ???)
 	std::string generateAddress() {
-		 
 		std::random_device rd;
+		
 		std::mt19937 gen(rd());
 		std::uniform_int_distribution<> dis(0, INT_MAX);
 		std::string ss;
@@ -132,7 +132,7 @@ public:
 		}
 	}
 
-
+	 
 	const void pending_transactions() const noexcept 
 	{
 		spdlog::set_level(spdlog::level::debug);
@@ -167,10 +167,7 @@ public:
 		return blocks_.back();
 	}
 
-	bool isValid() const noexcept
-	{
-		 
-	}
+	 
 	// Prints all blocks in blockchain : cmd / @lexndrr
 	void print_chain() {
 		spdlog::info("Printing blockchain:");

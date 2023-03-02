@@ -37,7 +37,7 @@ using std::cin;              /**/
 using std::endl;             /**/
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 
-int difficulty{ 2 }; // block-mining difficulty % 10000 : / 2
+int difficulty{ 2 }; // block-mining difficulty % 10000 : + 2
 double reward{ 20.00070 };	// reward % 10000 : / 2
 
 class Block
