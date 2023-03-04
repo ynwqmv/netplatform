@@ -1,5 +1,5 @@
 # Netplatform 0.8.40 (upds)
-# network (upd. #7:55) 
+# network (upd. ![#7:55](https://github.com/ynwqmv/netplatform/edit/master/netplatform/README.md)) 
 * Contains:    
 Network implementation | ![_Transmission Control Protocol (TCP)_](https://www.techtarget.com/searchnetworking/definition/TCP) 
 * Used:  
