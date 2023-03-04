@@ -41,7 +41,7 @@ int main(int argc, const char* argv[])
     try {
         Blockchain b;
         Block block;
-        boost::asio::io_context io_context;
+        
         
         
         Network net(b,block, 8001);
