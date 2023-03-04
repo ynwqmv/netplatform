@@ -40,7 +40,7 @@
 - [Roadmap]()
 - [Contributing]()
 - [Version]()
-  - 0.8.4 (Latest)
+  - ![v1.1.1]() (Latest)
 - [License](https://github.com/ynwqmv/netplatform/blob/master/LICENSE)
  
 
