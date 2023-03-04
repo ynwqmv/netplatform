@@ -13,8 +13,8 @@ public:
 		
 		/* (InDev #0.1) */
 	}
-
-	
+	json j;
+	const auto last_proof = last_block["proof"].as_int64();
 
 	
 private:

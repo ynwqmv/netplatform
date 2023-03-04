@@ -29,7 +29,7 @@
 #include <random>
 
 #define MAX_BLOCK_SIZE 1000
-#define EBLOCKS		   10000
+#define EBLOCKS		   50000
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 using json = nlohmann::json; /**/
 using std::cout;             /**/

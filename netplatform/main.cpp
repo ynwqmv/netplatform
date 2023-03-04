@@ -27,29 +27,37 @@
 */
 
 
-
-
+ 
 
 
 #include "Network.h"
 #include "Blockchain.h"
-
+ 
  
 
 
 int main(int argc, const char* argv[])
 {
-	Blockchain b;
-	Block block;
-	Network w(b,block);
-    
-	w.run();
-    /*Node node(b, block);
-    node.connect("127.0.0.1", 8000);*/
-}
+    try {
+        Blockchain b;
+        Block block;
+        boost::asio::io_context io_context;
+        
+        
+        Network net(b,block, 8001);
+        
+        net.run();
+         
+         
+        
+    }
+    catch (std::exception& err)
+    {
+        spdlog::info("{}", err.what());
+    }
+    catch (boost::system::system_error& err)
+    {
+        spdlog::info("{}", err.what());
+    }
 
-
-
- 
- 
-
+} 

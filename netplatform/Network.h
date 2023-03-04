@@ -34,7 +34,9 @@
 #include <boost/beast/http.hpp>
 #include <boost/beast/version.hpp>
 #include <boost/asio.hpp>
+ 
 #define _WIN32_WINNT 0x0601
+#define __NETV 0x0110409
 
 
 namespace beast = boost::beast;         // from <boost/beast.hpp>
@@ -44,12 +46,17 @@ using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
 
 using boost::asio::ip::tcp;
 
-#include "Node.hpp"
+ 
 
 class Network
 {
 public:
-	explicit Network(Blockchain& chain, Block& block) : _chain(chain), _block(block), _ioContext(), _acceptor(_ioContext, tcp::endpoint(tcp::v4(), 8000)) {
+	explicit Network(Blockchain& chain, Block& block, UINT port) : 
+		_chain(chain), 
+		_block(block),
+		_ioContext(),
+		_port(port),
+		_acceptor(_ioContext, tcp::endpoint(tcp::v4(), port)) {
 		listenForConnections();
 	}
 	
@@ -63,6 +70,7 @@ public:
  	{
 		if (_block.getHash() != _block.calculateHash())
 		{
+			
 			return false;
 		}
 		
@@ -78,25 +86,31 @@ public:
 			}
 		}
 
+		 
+
 		return true;
 	}
+
+ 
+	 
 private:
-	Blockchain& _chain;
-	Block& _block;
-	net::io_context _ioContext;
-	tcp::acceptor _acceptor;
-	
+	Blockchain& _chain;         // For manipulating with our chain
+	Block& _block;              // For manipulating with our chain's blocks
+	net::io_context _ioContext; // For I/O Networking
+	tcp::acceptor _acceptor;    // For Manipulating with our TCP 
+	UINT _port;
 	std::vector < std::shared_ptr<tcp::socket> > _sockets;
 	friend class Node;
 	std::unordered_set<std::string> _knownPeers;
+	static size_t sock_count;
 
 	void listenForConnections() {
 
-		spdlog::info("Listening for connections on port 8000");
 		auto socket = std::make_shared<tcp::socket>(_ioContext);
 		_acceptor.async_accept(*socket, [this, socket](const boost::system::error_code& error) {
 			if (!error) {
-				spdlog::info("New connection from {}", socket->remote_endpoint().address().to_string());
+				++sock_count; // peer count +1
+				spdlog::info("New connection from {}:{}", socket->remote_endpoint().address().to_string(), socket->remote_endpoint().port());
 
 				_sockets.push_back(socket);
 
@@ -119,7 +133,8 @@ private:
 					listenForMessages(socket);
 				}
 				else if (error == boost::asio::error::eof) {
-					spdlog::warn("Client at {} disconnected", socket->remote_endpoint().address().to_string());
+					--sock_count;
+					spdlog::warn("Client at {}:{} disconnected", socket->remote_endpoint().address().to_string(), socket->remote_endpoint().port());
 
 					_sockets.erase(std::remove(_sockets.begin(), _sockets.end(), socket), _sockets.end());
 				}
@@ -130,6 +145,44 @@ private:
 				}
 			});
 	}
+
+	bool parseChain(const nlohmann::json& chain)
+	{
+		return true;
+	}
+
+	void Sync(std::shared_ptr<tcp::socket> socket)
+	{
+		// Get the current blockchain and serialize it to JSON
+		auto chain_json = _chain.toJSON(_chain);
+		std::string chain_str = chain_json.dump();
+
+		// Send the blockchain to the connected node
+		boost::asio::write(*socket, boost::asio::buffer(chain_str));
+
+		//// Receive the response from the connected node
+		//boost::asio::streambuf response;
+		//boost::asio::read_until(*socket, response, '\n');
+		//std::string response_message = boost::asio::buffer_cast<const char*>(response.data());
+
+		// If the response starts with "/chain ", parse the blockchain and update our own copy
+		/*if (true) {
+			std::string chain_data = response_message.substr(7);
+			nlohmann::json chain = nlohmann::json::parse(chain_data);
+			if (parseChain(chain)) {
+				spdlog::info("Blockchain synchronized with {}", socket->remote_endpoint().address().to_string());
+			}
+			else {
+				spdlog::error("Failed to synchronize blockchain with {}", socket->remote_endpoint().address().to_string());
+			}
+		}*/
+	}
+
+	
+
+	 
+
+
 
 	void handleMessage(const std::string& message) {
 		if (message.substr(0, 5) == "/peer")
@@ -149,21 +202,26 @@ private:
 			handleToJson();
 		else if (message.substr(0, 8) == "/isvalid")
 		{
+			 
 			if (isValid()) { spdlog::info("Blockchain is valid"); }
 			else { spdlog::info("Blockchain is invalid"); }
+		}
+		else if (message.substr(0, 5) == "/sync")
+		{
+			// Sync(socket) here
+			for (const auto& sock : _sockets)
+			{
+				
+				Sync(sock); // sync to all nodes connecting to blockchain network 
+			}
+		}
+		else if (message.substr(0, 5) == "/info")
+		{
+			handleInfo();
 		}
 		 
 		else spdlog::warn("Unknown message type received: {}", message);
 	}
-	/*void handleHelloMessage(const std::string& message) {
-		std::string peerAddress = message.substr(6, message.length() - 7);
-
-		if (_knownPeers.count(peerAddress) == 0) {
-			spdlog::info("New peer connected: {}", peerAddress);
-
-			_knownPeers.insert(peerAddress);
-		}
-	}*/
 
 	void handleHelloMessage(const std::string& message) {
 		std::string peerAddress = message.substr(6, message.length() - 7);
@@ -179,7 +237,7 @@ private:
 
 				_knownPeers.insert(peerAddress);
 
-				try {
+				try { 
 					auto socket = std::make_shared<tcp::socket>(_ioContext);
 					boost::asio::io_service io_service;
 					tcp::resolver resolver(io_service);
@@ -205,7 +263,6 @@ private:
 			}
 		}
 	}
-
 	const void menu() const noexcept
 	{
 		spdlog::info("");
@@ -222,12 +279,21 @@ private:
 		 
 		spdlog::info("Command: {}", message);
 		_chain.Mine(_block);
+		for (const auto& sock : _sockets)
+		{   
+			const std::string stat = "\n-> New block mined!\n";
+			boost::asio::write(*sock, boost::asio::buffer(stat));
+			
+			Sync(sock);
+		}
 		_chain.addBlock(_block);
+
+		/* if new block is mined, server sends to all nodes message, that new block is mined
+		   and then synchronizing the new chain including the new mined block with txs'   */
 	}
 	void handleAddrGenMessage(const std::string& message) {
 		spdlog::info("Command: {}", message);
-		spdlog::info("Generated Address: {}",_chain.generateAddress());
-		
+		spdlog::info("Generated Address: {}",_chain.generateAddress()); 
 	}
 	void handlePendingTx()
 	{
@@ -244,6 +310,20 @@ private:
 		_chain.addTransaction(transaction);
 		 
 	}
+
+	void handleInfo() const noexcept
+	{
+		
+		time_t now = std::time(nullptr);
+		auto bc = _block.block_count;
+		 
+		spdlog::info("Mining Difficulty: {}",difficulty);
+		spdlog::info("Max Tx per block: {}", MAX_BLOCK_SIZE);
+		spdlog::info("Block reward: {}", reward);
+		spdlog::info("Last block #{} | {} ago", bc, now - _block.timestamp);
+		spdlog::info("Nodes Connected: {}", sock_count);
+	}
+
 	void handleToJson()
 	{
 		spdlog::info("JSON: {}", _chain.toJSON(_chain).dump(2));
@@ -268,37 +348,17 @@ private:
  
 };
 
- 
+size_t Network::sock_count = 0;
 #endif 
+ 
+ 
+                     
+ 
+             
+ 
 
 
 
+ 
 
-
-/*
-
-	std::string peerAddress = message.substr(5, message.length() - 6);
-		if (_knownPeers.count(peerAddress) == 0) {
-			spdlog::warn("Sync message from unknown peer: {}", peerAddress);
-
-			return;
-		}
-		spdlog::info("Syncing with peer: {}", peerAddress);
-		std::queue<Block> blocksToSync;
-
-		for (const auto& block : _chain.getChain()) {
-			blocksToSync.push(block);
-		}
-
-		std::string syncRequest = "SYNC:" + _chain.getLastBlock().serialize() + '\n';
-		boost::asio::write(*socket, boost::asio::buffer(syncRequest));
-
-		while (!blocksToSync.empty()) {
-			auto block = blocksToSync.front();
-			blocksToSync.pop();
-
-			std::string blockMessage = "BLOCK:" + block.serialize() + '\n';
-			boost::asio::write(*socket, boost::asio::buffer(blockMessage));
-		}
-
-*/
+ 

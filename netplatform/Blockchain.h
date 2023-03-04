@@ -124,7 +124,7 @@ public:
 		if (block.block_count % EBLOCKS == 0)
 		{
 			/*                * HALVING *
-				* Each `10000` blocks difficulty(+2) | reward(/2)
+				* Each `50000` blocks difficulty(+2) | reward(/2)
 			*/	
 			spdlog::info("Halving at block # {}", block.block_count);
 			difficulty += 2;
