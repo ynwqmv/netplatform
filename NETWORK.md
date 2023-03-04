@@ -9,4 +9,6 @@ ____
 • v11.51.743 Network can accept a lot of connection, so each connection(Node) can communicate with blockchain:
 - [Make Request to Mine block]()
 - [Sync the blockchain]()
-- [Make Info Request about Blockchain()
+- [Make Info Request about Blockchain]()
+
+## Every connection problems/errors/exceptions are handling in 11.51.743 version
