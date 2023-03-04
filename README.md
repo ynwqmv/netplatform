@@ -61,3 +61,10 @@
 | 0.8.4               | ✔️      | 4   | 6-8 GB   | 10.52.133 |
  
  ____
+ 
+ 
+ 
+ ## Connecting to Network
+ ### Windows
+ ```telnet 127.0.0.1 8000```
+ 
