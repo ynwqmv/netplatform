@@ -27,9 +27,11 @@
 #include <stdexcept>
 #include <string>
 #include <random>
+#include <unordered_map>
+#define MAX_BLOCK_SIZE  1000
+#define EBLOCKS		    50000
+#define MAX_NET_AMOUNT  99000000000
 
-#define MAX_BLOCK_SIZE 1000
-#define EBLOCKS		   50000
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 using json = nlohmann::json; /**/
 using std::cout;             /**/
@@ -37,7 +39,7 @@ using std::cin;              /**/
 using std::endl;             /**/
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 
-int difficulty{ 2 }; // block-mining difficulty % 10000 : + 2
+int difficulty{ 3 }; // block-mining difficulty % 10000 : + 2
 double reward{ 20.00070 };	// reward % 10000 : / 2
 
 class Block
