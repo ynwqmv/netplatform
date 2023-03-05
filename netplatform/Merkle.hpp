@@ -28,7 +28,6 @@ public:
 		{
 			ss << transactions[i].getAmount() << transactions[i].getFrom() << transactions[i].getRecipient();
 			merkle.push_back(sha512(ss.str()));
-		
 		}
 
 		// Build the tree from the bottom : up
