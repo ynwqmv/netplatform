@@ -2,3 +2,4 @@
 - [ ] Implement transactions
 - [ ] Upgrade   security
 - [ ] Upgrade   Node:Network communication
+- [ ] Digital Signatures
