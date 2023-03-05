@@ -2,7 +2,7 @@
 
 
 #include "Block.h"
-//#include "Network.h"
+#include "Merkle.hpp"
 
  
 
@@ -42,7 +42,7 @@ public:
 		int nonce = 0;
 		bool found = false;
 		while (!found)
-		{
+		{ 
 			nonceStr = std::to_string(nonce);  // convert nonce to string
 			block.nonce = nonceStr;  // set nonce of the block
 			hash = block.calculateHash();  // calculate the hash of the block
@@ -76,15 +76,8 @@ public:
 		std::string makeHash = sha512(hash + std::to_string(current));
 		return makeHash;
 	}
-	// blockchain info : cmd / @lexndrr
-	const void get_chain_info() const noexcept
-	{
-		spdlog::info("Difficulty: {}", difficulty);
-		spdlog::info("Block Reward: {}", reward);
-		spdlog::info("Max Block Size: {}", MAX_BLOCK_SIZE);
-		spdlog::info("Blocks found: {}", block_count);
-		spdlog::info("Encryption: SHA512");
-	}
+	 
+	
 	void addBlock(Block& block)
 	{
 
@@ -103,23 +96,34 @@ public:
 		if (!pendingTransaction.empty())
 		{
 			std::vector<Transaction> transactions;
+			
+			
 			if (pendingTransaction.size() <= MAX_BLOCK_SIZE)
 			{
 				transactions = pendingTransaction;
 				pendingTransaction.clear();
+				
 			}
 			else
 			{
 				transactions = std::vector<Transaction>(pendingTransaction.begin(), pendingTransaction.begin() + MAX_BLOCK_SIZE);
 				pendingTransaction = std::vector<Transaction>(pendingTransaction.begin() + MAX_BLOCK_SIZE, pendingTransaction.end());
+				
 			}
+
+			
 			block.transaction.insert(block.transaction.end(), transactions.begin(), transactions.end());
+			
 		}
 
 		blocks_.push_back(block);
 		block.block_count++;
+		 
+		
+		
 		spdlog::info("Block was added successfully!");
 		print_chain();
+		std::cout << std::endl;
 		
 		if (block.block_count % EBLOCKS == 0)
 		{
@@ -132,7 +136,6 @@ public:
 		}
 	}
 
-	 
 	const void pending_transactions() const noexcept 
 	{
 		spdlog::set_level(spdlog::level::debug);
@@ -180,6 +183,7 @@ public:
 			spdlog::info("Block hash: {}", block.hash);
 			spdlog::info("Previous block hash: {}", block.prevHash);
 			spdlog::info("Difficulty: {}", difficulty);
+			spdlog::info("Nonce: {}", block.nonce);
 			spdlog::info("Transactions:");
 			for (auto transaction : block.transaction) {
 				
@@ -262,6 +266,8 @@ private:
 
 		blocks_.push_back(block);
 	}
+
+	
 	 
 };
  
