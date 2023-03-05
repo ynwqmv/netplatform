@@ -5,30 +5,57 @@
 class Merkle
 {
 public:
-	Merkle(const std::vector<Transaction>& transactions)
+	Merkle(std::vector<Transaction>& transactions)
 	{
 		if (transactions.empty())
 			spdlog::info("Merkle is empty");
 
+		int n = transactions.size();
 		
-		/* (InDev #0.1) */
+		
+		
+		if (n % 2 == 0)
+		{
+			transactions.push_back(transactions[n - 1]);
+			n++;
+		}
+
+		
+		std::stringstream ss;
+		
+
+		for (int i = 0; i < n; ++i)
+		{
+			ss << transactions[i].getAmount() << transactions[i].getFrom() << transactions[i].getRecipient();
+			merkle.push_back(sha512(ss.str()));
+
+		}
+
+		// Build the tree from the bottom : up
+		for (int i = n - 1; i > 0; i -= 2)
+		{
+			std::string left = merkle[i - 1];
+			std::string right = merkle[i];
+			merkle.push_back(sha512(left + right));
+		}
+
+		
 	}
-	json j;
-	const auto last_proof = last_block["proof"].as_int64();
+	 
+	std::string getRoot()
+	{
+		return merkle[merkle.size() - 1];
+	}
 
 	
 private:
-
 	 
+	std::vector<std::string> merkle;
+	
 
-	 
 
-	std::string hashes_;
 
-	/*std::string HashTransaction(const Transaction& tx) const
-	{
-	 	//Compute the hash of the transaction using a hash function like SHA-256
-	 	//and return the hash as a string
-		return "";
-	}*/
+
+
+
 };
