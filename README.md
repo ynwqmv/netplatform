@@ -8,20 +8,20 @@
   <b>Netplatform Blockchain v1.1.1 (Latest)</b>
   <br />
   <br />
-  <a href="">Source</a>
+  <a href="https://github.com/ynwqmv/netplatform/tree/master/netplatform">Source</a>
   ·
-  <a href="https://github.com/ynwqmv/netplatform/issues/2">Network</a>
+  <a href="https://github.com/ynwqmv/netplatform/releases">Network</a>
   ·
-  <a href="https://github.com/dec0dOS/amazing-github-template/discussions">YouTube</a>
+  <a href="https://github.com/ynwqmv/netplatform/releases">Releases</a>
 </div>
 
 <div align="center">
 <br />
 
-[![license](https://img.shields.io/github/license/dec0dOS/amazing-github-template.svg?style=flat-square)](LICENSE)
-[![Source](https://img.shields.io/badge/YouTube-@qmvcpp-blue.svg)]()
+[![license](https://img.shields.io/github/license/dec0dOS/amazing-github-template.svg?style=flat-square)](https://github.com/ynwqmv/netplatform/blob/master/LICENSE)
+[![Source](https://img.shields.io/badge/YouTube-@qmvcpp-blue.svg)](https://www.youtube.com/channel/UCTjy50H6WsJtW_7lXo2NW8g)
 
-[![Network](https://img.shields.io/badge/Network-10.35.133-blue.svg)](https://github.com/ynwqmv/netplatform/blob/master/README.md)
+[![Network](https://img.shields.io/badge/Network-11.51.743-blue.svg)](https://github.com/ynwqmv/netplatform/blob/master/NETWORK.md)
 
 
 </div>
@@ -48,18 +48,14 @@
 
 ---
 
-## Minimum Requirements
-| CLI Manager Version | Support | Cores | Memory | Network Version |
-|---------------------|---------|-----|--------|--------|
-| 0.1.7               | ❌      | 2   | 2 GB   | 9.33.0
-| 0.8.4               | ✔️      | 4   | 4 GB   | 10.52.133 |
+
 
 ## Requirements
 | CLI Manager Version | Support | Cores | Memory | Network Version |
 |---------------------|---------|-----|--------|--------|
-| 0.1.7               | ❌      | 2   | 3-4 GB   | 9.33.0
-| 0.8.4               | ✔️      | 4   | 6-8 GB   | 10.52.133 |
- 
+| 0.1.7               | ❌      | 2   | 2 GB   | 9.33.0
+| 0.8.4               | ❌      | 2   | 4 GB   | 10.52.133 |
+| 1.1.1               | ✔️      | 2   | 4-8 GB   | 11.51.743 |
  ____
  
  
