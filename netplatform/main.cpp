@@ -39,12 +39,12 @@
 int main(int argc, const char* argv[])
 {
     try {
-        Blockchain b;
+        Blockchain blockchain;
         Block block;
         boost::asio::io_context io_context;
         
         
-        Network net(b,block, 8001);
+        Network net(blockchain,block, 8001);
         
         net.run();
          
