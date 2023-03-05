@@ -64,8 +64,8 @@ public:
 	{
 		return *this;
 	}
-
 	// beta : calculating hash / @ynwqmv
+	
 	inline const std::string calculateHash() noexcept
 	{
 		std::string strData;

@@ -59,3 +59,12 @@ void listenForConnections() {
 	}
 ```
 ____
+# (upd #11:1)
+![image](https://user-images.githubusercontent.com/126266383/222915294-41e8c938-7736-4e29-bf2f-373acaa8eb56.png)
+![image](https://user-images.githubusercontent.com/126266383/222915379-69f1dda5-5c81-47bb-b9ae-11db1e4620cb.png)
+ 
+
+![image](https://user-images.githubusercontent.com/126266383/222915446-bcb15db7-d36d-4209-b6fa-210f0e353a30.png)
+![image](https://user-images.githubusercontent.com/126266383/222915493-65a3a827-be7b-4d62-b25a-7a8718c8bbd4.png)
+___
+
