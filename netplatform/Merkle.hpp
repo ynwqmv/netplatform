@@ -10,8 +10,8 @@ public:
 		if (transactions.empty())
 			spdlog::info("Merkle is empty");
 
-		int n = transactions.size();
 		
+		int n = transactions.size();
 		
 		
 		if (n % 2 == 0)

@@ -31,10 +31,10 @@ public:
 		}
 		
 	}
+	
 	std::string Mine(Block& block)
 	{
 		 
-		//spdlog::info("Mininig ...  \t\tdifficulty: {} ", difficulty);
 		std::string target(difficulty, '0');  // create target value
 		std::string hash;
 		std::string nonceStr;
@@ -43,9 +43,9 @@ public:
 		bool found = false;
 		while (!found)
 		{ 
-			nonceStr = std::to_string(nonce);  // convert nonce to string
-			block.nonce = nonceStr;  // set nonce of the block
-			hash = block.calculateHash();  // calculate the hash of the block
+			nonceStr = std::to_string(nonce);          // convert nonce to string
+			block.nonce = nonceStr;					   // set nonce of the block
+			hash = block.calculateHash();	           // calculate the hash of the block
 			if (hash.substr(0, difficulty) == target)  // check if hash meets target difficulty
 			{
 				found = true;

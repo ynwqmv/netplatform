@@ -178,7 +178,7 @@ private:
 		boost::asio::async_read_until(*socket, boost::asio::dynamic_buffer(*message), '\n',
 			[this, socket, message](const boost::system::error_code& error, std::size_t length) {
 				if (!error) {
-					handleMessage(*message);
+					handleMessage(*message, socket);
 
 					listenForMessages(socket);
 				}
@@ -213,26 +213,6 @@ private:
 
 		// Send the blockchain to the connected node
 		boost::asio::write(*socket, boost::asio::buffer(chain_str));
-		 
-
-		 
-
-		//// Receive the response from the connected node
-		//boost::asio::streambuf response;
-		//boost::asio::read_until(*socket, response, '\n');
-		//std::string response_message = boost::asio::buffer_cast<const char*>(response.data());
-
-		// If the response starts with "/chain ", parse the blockchain and update our own copy
-		/*if (true) {
-			std::string chain_data = response_message.substr(7);
-			nlohmann::json chain = nlohmann::json::parse(chain_data);
-			if (parseChain(chain)) {
-				spdlog::info("Blockchain synchronized with {}", socket->remote_endpoint().address().to_string());
-			}
-			else {
-				spdlog::error("Failed to synchronize blockchain with {}", socket->remote_endpoint().address().to_string());
-			}
-		}*/
 	}
 
 	
@@ -241,11 +221,10 @@ private:
 
 
 
-	void handleMessage(const std::string& message) {
-		if (message.substr(0, 5) == "/peer")
-			handleHelloMessage(message);
+	void handleMessage(const std::string& message, std::shared_ptr<tcp::socket> socket) {
+	
 
-		else if (message.substr(0, 5) == "/mine")
+		if (message.substr(0, 5) == "/mine")
 			handleSyncMessage(message);
 
 		else if (message.substr(0, 9) == "/gen_addr")
@@ -255,8 +234,8 @@ private:
 		else if (message.substr(0, 10) == "/pendingtx")
 			handlePendingTx();
 
-		else if (message.substr(0, 7) == "/tojson")
-			handleToJson();
+		else if (message.substr(0, 6) == "/print")
+			toJSONClient(socket);
 		else if (message.substr(0, 8) == "/isvalid")
 		{
 			 
@@ -290,13 +269,19 @@ private:
 
 
 	
-	/*void toJSONClient(std::shared_ptr<tcp::socket> sock) const noexcept
+	void toJSONClient(std::shared_ptr<tcp::socket> sock) const noexcept
 	{
 		auto jsonf = _chain.toJSON(_chain).dump();
 		
-		 boost::asio::write(*sock, boost::asio::buffer(jsonf));
+		for (const auto& _sock : _sockets)
+		{
+			if (_sock == sock)
+			{
+				boost::asio::write(*sock, boost::asio::buffer(jsonf));
+			}
+		}
 		 
-	}*/
+	}
 
 	void handleHelloMessage(const std::string& message) {
 		std::string peerAddress = message.substr(6, message.length() - 7);
@@ -344,11 +329,14 @@ private:
 	{
 		spdlog::info("");
 		spdlog::info("+-+-+-+-+-+-+-+-+-+COMMANDS+-+-+-+-+-+-+-+-+-+");
-		spdlog::info("/peer		 | Usage :: /peer host:port	  | (ADD NEW PEER NODE)");
+		spdlog::info("/isvalid		 | Usage :: /isvalid	  | (VALIDATION OF CHAIN)");
 		spdlog::info("/mine		 | Usage :: /mine		  | (START MINE)");
-		spdlog::info("/tx		 | Usage :: /tx from_address recipient_address amount | (MAKE TX)");
+		spdlog::info("/tx		 | Usage :: /tx `from_address` `recipient_address` `amount` | (MAKE TX)");
 		spdlog::info("/pendingtx      | Usage :: /pendingtx		  | (SHOW PENDING TX-S)");
-		spdlog::info("/tojson	 | Usage :: /tojson               | (PRINT BLOCKCHAIN IN JSON FORMAT)");
+		spdlog::info("/print	         | Usage :: /print                | (PRINT BLOCKCHAIN IN JSON FORMAT)");
+		spdlog::info("/getnodes       | Usage :: /getnodes             | (GET ALL CONNECTED NODE INFO.)");
+		spdlog::info("/sync	         | Usage :: /sync		   | (SYNCHRONIZE BLOCKCAIN)");
+		spdlog::info("/gen_addr	         | Usage :: /gen_addr		   | (GEN. UNIQUE WALLET ADDRESS)");
 		spdlog::info("+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+"); 
 	}
 
@@ -360,7 +348,7 @@ private:
 		_chain.Mine(_block);
 		for (const auto& sock : _sockets)
 		{   
-			const std::string stat = "|> NEW BLOCK MINED <|";
+			const std::string stat = "|> NEW BLOCK MINED <|\t";
 			boost::asio::write(*sock, boost::asio::buffer(stat));
 			std::cout << std::endl;
 			Sync(sock);
@@ -407,6 +395,18 @@ private:
 	void handleToJson()
 	{
 		spdlog::info("JSON: {}", _chain.toJSON(_chain).dump(2));
+	}
+
+	void update()
+	{
+
+		/* 
+		   *UPDATE*UPDATE*UPDATE*UPDATE*UPDATE*UPDATE*UPDATE*
+		   *UPDATE*UPDATE*UPDATE*UPDATE*UPDATE*UPDATE*UPDATE*
+* 		   *UPDATE*UPDATE*UPDATE*UPDATE*UPDATE*UPDATE*UPDATE*
+*		   *UPDATE*UPDATE*UPDATE*UPDATE*UPDATE*UPDATE*UPDATE*
+		*/
+
 	}
 
 	Transaction generateNewTransaction()
