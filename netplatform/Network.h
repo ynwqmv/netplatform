@@ -166,10 +166,7 @@ private:
 		}
 	}
 
-	void HandleMine()
-	{
-
-	}
+	 
 
 
 	void listenForMessages(std::shared_ptr<tcp::socket> socket) {
