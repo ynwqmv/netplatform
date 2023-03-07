@@ -66,8 +66,10 @@
  
  
  
- ## Connecting to Network
+ # Connecting to Network
  ## Windows
- ```telnet 127.0.0.1 8000```
+ ```telnet <host> <port>```
+### Example
+> telnet 127.0.0.1 8001 
  
  
