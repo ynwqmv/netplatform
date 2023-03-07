@@ -141,6 +141,7 @@
     <ClInclude Include="Merkle.hpp" />
     <ClInclude Include="sha512.h" />
     <ClInclude Include="Transaction.h" />
+    <ClInclude Include="Wallet.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
