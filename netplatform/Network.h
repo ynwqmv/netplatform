@@ -48,7 +48,7 @@ namespace net = boost::asio;            // from <boost/asio.hpp>
 using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
 using boost::asio::ip::tcp;
 
-using USetStr		    = std::unordered_set<std::string>;
+using USetStr		     = std::unordered_set<std::string>;
 using UMapStrLongDouble = std::unordered_map<std::string, long double>;
 using VecSPtrTcpSocket  = std::vector < std::shared_ptr<tcp::socket> >;
 
