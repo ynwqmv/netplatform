@@ -1,7 +1,7 @@
 /*
 	MIT License
 
-	Copyright (c) lexndrr (ALL)
+	Copyright (c) lexndrr *
 
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -40,17 +40,17 @@
 #include <boost/uuid/random_generator.hpp> 
 #define _WIN32_WINNT 0x0601
 #define __NETV 0x0110409
-
+#define NO_NODES_FOUND spdlog::critical("No nodes are connected");
 
 namespace beast = boost::beast;         // from <boost/beast.hpp>
 namespace http = beast::http;           // from <boost/beast/http.hpp>
 namespace net = boost::asio;            // from <boost/asio.hpp>
 using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
-
 using boost::asio::ip::tcp;
 
- 
-
+using USetStr		    = std::unordered_set<std::string>;
+using UMapStrLongDouble = std::unordered_map<std::string, long double>;
+using VecSPtrTcpSocket  = std::vector < std::shared_ptr<tcp::socket> >;
 
 struct SocketData {
 	std::shared_ptr<tcp::socket> socket;
@@ -69,8 +69,8 @@ public:
 		_block(block),
 		_ioContext(),
 		_port(port),
-		_acceptor(_ioContext, tcp::endpoint(tcp::v4(), port)) {
-		listenForConnections();
+		_acceptor(_ioContext, tcp::endpoint(tcp::v4(), port)) { 
+		listenForConnections(); update();
 	}
 	
 	void run() {
@@ -112,11 +112,11 @@ private:
 	net::io_context _ioContext; // For I/O Networking
 	tcp::acceptor _acceptor;    // For Manipulating with our TCP 
 	UINT _port;
-	std::vector < std::shared_ptr<tcp::socket> > _sockets;
+	VecSPtrTcpSocket _sockets;
 	
 	std::unordered_map<std::string, SocketData> keys;
-	std::unordered_set<std::string> _knownPeers;
-	std::unordered_map<std::string,long double> _balance;
+	USetStr _knownPeers;
+	UMapStrLongDouble _balance;
 	static size_t sock_count;
 
 	void listenForConnections() {
@@ -212,12 +212,6 @@ private:
 		boost::asio::write(*socket, boost::asio::buffer(chain_str));
 	}
 
-	
-
-	 
-
-
-
 	void handleMessage(const std::string& message, std::shared_ptr<tcp::socket> socket) {
 	
 
@@ -270,12 +264,19 @@ private:
 	{
 		auto jsonf = _chain.toJSON(_chain).dump();
 		
-		for (const auto& _sock : _sockets)
+		if (!_sockets.empty())
 		{
-			if (_sock == sock)
+			for (const auto& _sock : _sockets)
 			{
-				boost::asio::write(*sock, boost::asio::buffer(jsonf));
+				if (_sock == sock)
+				{
+					boost::asio::write(*sock, boost::asio::buffer(jsonf));
+				}
 			}
+		}
+		else
+		{
+			NO_NODES_FOUND;
 		}
 		 
 	}
@@ -290,7 +291,7 @@ private:
 			std::string port = parts[1];
 
 			if (_knownPeers.count(peerAddress) == 0) {
-				spdlog::info("New peer connected: {} : {}",ip,port);
+				spdlog::info("New peer connected: {}:{}",ip,port);
 
 				_knownPeers.insert(peerAddress);
 
@@ -303,7 +304,7 @@ private:
 					boost::asio::async_connect(*socket, endpoints,
 						[this, socket](const boost::system::error_code& error, tcp::endpoint endpoint) {
 							if (!error) {
-								spdlog::info("Connected to peer at {} : {}",endpoint.address().to_string(), endpoint.port());
+								spdlog::info("Connected to peer at {}:{}",endpoint.address().to_string(), endpoint.port());
 
 								_sockets.push_back(socket);
 
@@ -394,16 +395,31 @@ private:
 		spdlog::info("JSON: {}", _chain.toJSON(_chain).dump(2));
 	}
 
-	void update()
-	{
-
-		/* 
-		   *UPDATE*UPDATE*UPDATE*UPDATE*UPDATE*UPDATE*UPDATE*
-		   *UPDATE*UPDATE*UPDATE*UPDATE*UPDATE*UPDATE*UPDATE*
-* 		   *UPDATE*UPDATE*UPDATE*UPDATE*UPDATE*UPDATE*UPDATE*
-*		   *UPDATE*UPDATE*UPDATE*UPDATE*UPDATE*UPDATE*UPDATE*
-		*/
-
+	void update() {
+		auto timer = std::make_shared<boost::asio::steady_timer>(_ioContext);
+		timer->expires_after(std::chrono::seconds(60));
+		timer->async_wait([this, timer](const boost::system::error_code& error) {
+			if (!error) {
+				// Reset the timer to expire after another 10 seconds
+				spdlog::info("Online: {}", sock_count); // sending to server message about Online Nodes
+				if (!_sockets.empty())
+				{
+					for (const auto& sock : _sockets) // sending each 30 seconds message about Online Nodes
+					{
+						boost::asio::write(*sock,
+							boost::asio::buffer("Online: " + std::to_string(sock_count)));
+					}
+				}
+				else
+				{
+					NO_NODES_FOUND;
+				}
+				update();
+			}
+			else {
+				spdlog::error("Error in timer callback: {}", error.message());
+			}
+			});
 	}
 
 	Transaction generateNewTransaction()
