@@ -43,6 +43,8 @@
     - [/info]()
 - [Roadmap]()
 - [Contributing]()
+    - @ynwqmv
+    - @lexndrr
 - [Version]()
   - [v1.1.1]() (Latest)
 - [License](https://github.com/ynwqmv/netplatform/blob/master/LICENSE)
