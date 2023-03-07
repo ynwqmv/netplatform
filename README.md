@@ -67,7 +67,7 @@
  
  
  # Connecting to Network
-** To start communicate with Netplatform Blockchain's [network](), you need to join to the network**
+**To start communicate with Netplatform Blockchain's [network](), you need to join to the network**
  ## Windows
  ```telnet <host> <port>```
 ### Example
