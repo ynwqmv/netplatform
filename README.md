@@ -39,6 +39,8 @@
     - [/mine]()
     - [/gen_addr]()
     - [/sync]()
+    - [/getnodes]()
+    - [/info]()
 - [Roadmap]()
 - [Contributing]()
 - [Version]()
