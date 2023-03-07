@@ -34,13 +34,19 @@
   - [Releases](https://github.com/ynwqmv/netplatform/releases)
     - [Download & Install CLI Manager](https://github.com/ynwqmv/netplatform/releases)
   - [Usage](#usage)
-    - [Tx]()
-    - [toJSON]()
-    - [Mine]()
+    - [/tx]()
+    - [/print]()
+    - [/mine]()
+    - [/gen_addr]()
+    - [/sync]()
+    - [/getnodes]()
+    - [/info]()
 - [Roadmap]()
 - [Contributing]()
+    - @ynwqmv
+    - @lexndrr
 - [Version]()
-  - ![v1.1.1]() (Latest)
+  - [v1.1.1]() (Latest)
 - [License](https://github.com/ynwqmv/netplatform/blob/master/LICENSE)
  
 
@@ -60,8 +66,11 @@
  
  
  
- ## Connecting to Network
+ # Connecting to Network
+**To start communicate with Netplatform Blockchain's [network](), you need to join to the network. Than you're becoming a Node with it's unique key-address. All Nodes getting message that new Node is connected, valid and accepting you to the Network**
  ## Windows
- ```telnet 127.0.0.1 8000```
+ ```telnet <host> <port>```
+### Example
+> telnet 127.0.0.1 8001 
  
  
