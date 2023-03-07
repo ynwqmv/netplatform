@@ -67,7 +67,7 @@
  
  
  # Connecting to Network
-**To start communicate with Netplatform Blockchain's [network](), you need to join to the network**
+**To start communicate with Netplatform Blockchain's [network](), you need to join to the network. Than you're becoming a Node with it's unique key-address. All Nodes getting message that new Node is connected, valid and accepting you to the Network**
  ## Windows
  ```telnet <host> <port>```
 ### Example
