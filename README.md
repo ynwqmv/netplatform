@@ -53,9 +53,9 @@
 ## Requirements
 | CLI Manager Version | Support | Cores | Memory | Network Version |
 |---------------------|---------|-----|--------|--------|
-| 0.1.7               | ❌      | 2   | 2 GB   | 9.33.0
-| 0.8.4               | ❌      | 2   | 4 GB   | 10.52.133 |
-| 1.1.1               | ✔️      | 2   | 4-8 GB   | 11.51.743 |
+| 0.1.7               | ❌      | 2   | 2 GB   | [9.33.0](https://github.com/ynwqmv/netplatform/blob/master/NETWORK.md)   |
+| 0.8.4               | ❌      | 2   | 4 GB   | [10.52.133](https://github.com/ynwqmv/netplatform/blob/master/NETWORK.md) |
+| 1.1.1               | ✔️      | 2   | 4-8 GB   | [11.51.743](https://github.com/ynwqmv/netplatform/blob/master/NETWORK.md) |
  ____
  
  
